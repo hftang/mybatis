@@ -17,5 +17,52 @@
 
     </select>
 
+    <select id="findUserByName" parameterType="string" resultType="com.hftang.mybatis.pojo.User">
+
+        SELECT * FROM `user` where username LIKE '%${value}%'
+    </select>
+
+    <!--这的 useGeneratedKeys 跟下面的是一个意思-->
+
+    <insert id="insertUser" parameterType="com.hftang.mybatis.pojo.User" useGeneratedKeys="true" keyProperty="id">
+
+        -- keyproperty 是 user 的 id
+        -- resultType 主键数据类型
+        -- 指定执行时间
+
+        <!--<selectKey keyProperty="id" resultType="int" order="AFTER">-->
+        <!--SELECT LAST_INSERT_ID();-->
+        <!--</selectKey>-->
+
+        <selectKey keyProperty="address" order="BEFORE" resultType="string">
+            SELECT UUID()
+        </selectKey>
+
+
+        INSERT INTO USER
+        (`username`,
+        `birthday`,
+        `sex`,
+        `address`)
+        VALUES (#{username},
+        #{birthday},
+        #{sex},
+        #{address});
+
+    </insert>
+
+
+    <update id="updateUserById" parameterType="com.hftang.mybatis.pojo.User">
+
+
+
+        UPDATE `user` SET username=#{username} WHERE id = #{id}
+    </update>
+
+
+    <delete id="deleteOrderById" parameterType="int">
+        DELETE FROM orders WHERE id = #{id}
+    </delete>
+
 
 </mapper>
