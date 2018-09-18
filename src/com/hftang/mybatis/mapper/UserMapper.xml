@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--要写接口的全路径-->
+<mapper namespace="com.hftang.mybatis.mapper.UserMapper">
+
+
+    <!--sql 片段-->
+    <sql id="base_select_sql">
+               `id`,
+              `username`,
+              `birthday`,
+              `sex`,
+              `address`
+    </sql>
+
+
+    <!--id 输入 输出 类型 要一致-->
+    <select id="findUserById" parameterType="int" resultType="user">
+        SELECT
+        -- 引入sql片段
+        <include refid="base_select_sql"/>
+        FROM `user`
+        WHERE id =#{id}
+    </select>
+
+
+    <select id="getUserByName" parameterType="queryvo" resultType="user">
+
+        <!--SELECT * FROM `user` where 1 = 1-->
+
+        <!--<if test="username != null and username != '' ">-->
+        <!--AND username LIKE '%${username}%'-->
+        <!--</if>-->
+
+        <!--<if test="sex != null and sex != ''">-->
+        <!--AND sex = #{sex}-->
+
+        <!--</if>-->
+
+        -- where 标签的作用：自动补全where关键字 同事处理多余的and
+
+
+        SELECT * FROM `user`
+
+        <where>
+            <if test="username != null and username != '' ">
+                AND username LIKE '%${username}%'
+            </if>
+
+            <if test="sex != null and sex != ''">
+                AND sex = #{sex}
+
+            </if>
+        </where>
+
+
+    </select>
+
+    <!--这的 useGeneratedKeys 跟下面的是一个意思-->
+
+    <insert id="insertUser" parameterType="com.hftang.mybatis.pojo.User" useGeneratedKeys="true" keyProperty="id">
+
+        -- keyproperty 是 user 的 id
+        -- resultType 主键数据类型
+        -- 指定执行时间
+
+        <!--<selectKey keyProperty="id" resultType="int" order="AFTER">-->
+        <!--SELECT LAST_INSERT_ID();-->
+        <!--</selectKey>-->
+
+        <selectKey keyProperty="address" order="BEFORE" resultType="string">
+            SELECT UUID()
+        </selectKey>
+
+
+        INSERT INTO USER
+        (`username`,
+        `birthday`,
+        `sex`,
+        `address`)
+        VALUES (#{username},
+        #{birthday},
+        #{sex},
+        #{address});
+
+    </insert>
+
+
+    <!--<update id="updateUserById" parameterType="com.hftang.mybatis.pojo.User">-->
+
+
+    <!--UPDATE `user` SET username=#{username} WHERE id = #{id}-->
+    <!--</update>-->
+
+
+    <!--<delete id="deleteOrderById" parameterType="int">-->
+    <!--DELETE FROM orders WHERE id = #{id}-->
+    <!--</delete>-->
+
+
+
+    <!--输入类型是一个 User的包装类型  输出类型是一个 User-->
+
+    <select id="findUserByIds" parameterType="QueryVo" resultType="User">
+        SELECT
+        <include refid="base_select_sql"/>
+        FROM `user`
+
+        <where>
+            <!-- -->
+            <foreach collection="userIds" open="id in (" item="uId" separator="," close=")">
+                #{uId}
+            </foreach>
+        </where>
+
+    </select>
+
+
+</mapper>

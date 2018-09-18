@@ -3,6 +3,23 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+
+
+    <!--properties的使用-->
+    <properties resource="jdbc.properties">
+    </properties>
+
+    <!--别名的使用-->
+    <typeAliases>
+        <!--单个别名的配置-->
+        <!--<typeAlias type="com.hftang.mybatis.pojo.User" alias="user"></typeAlias>-->
+        <!--包扫描的别名配置 然后别名 是类的全名 不区分大小写-->
+        <package name="com.hftang.mybatis.pojo" ></package>
+
+
+    </typeAliases>
+
+
     <!-- 和spring整合后 environments配置将废除 -->
     <environments default="development">
         <environment id="development">
@@ -10,18 +27,25 @@
             <transactionManager type="JDBC"/>
             <!-- 数据库连接池 -->
             <dataSource type="POOLED">
-                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="driver" value="${jdbc.driver}"/>
                 <property name="url"
-                          value="jdbc:mysql://localhost:3306/mybatis?characterEncoding=utf-8"/>
-                <property name="username" value="root"/>
-                <property name="password" value="root"/>
+                          value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
             </dataSource>
         </environment>
     </environments>
 
     <!--引入文件-->
     <mappers>
-        <mapper resource="user.xml"/>
+        <!--映射文件，classs扫描器-->
+        <!--
+        1、满足2个条件 接口文件 与 映射文件同一个目录下
+        2、接口文件名称与映射文件名称保持一致
+        -->
+        <mapper class="com.hftang.mybatis.mapper.UserMapper"></mapper>
+        <mapper class="com.hftang.mybatis.mapper.OrderMapper"></mapper>
+
     </mappers>
 
 </configuration>
